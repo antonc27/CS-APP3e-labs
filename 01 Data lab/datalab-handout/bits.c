@@ -229,7 +229,7 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  int mask = (1 << n) + ~0;
+  int mask = (((1 << (n + ~0)) + ~0) << 1) + 1; // (1 << n) - 1;
   int reduced = x & mask;
   int shift = (33 + ~n);
   int extended = (reduced << shift) >> shift;
