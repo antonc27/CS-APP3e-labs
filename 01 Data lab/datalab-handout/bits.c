@@ -256,7 +256,7 @@ int negate(int x) {
 int isPositive(int x) {
   int negative_bit;
   x = (x >> 1) + (x & 0x1);
-  negative_bit = ((x-1) >> 31) & 0x1;
+  negative_bit = ((x + ~0) >> 31) & 0x1;
   return negative_bit ^ 0x1;
 }
 /* 
