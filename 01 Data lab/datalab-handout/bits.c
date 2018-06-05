@@ -340,10 +340,10 @@ int ilog2(int x) {
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
+  int msb = (uf >> 31) & 0x1;
   if (uf == 0x7fc00000 || uf == 0xffc00000) {
     return uf;
   }
-  int msb = (uf >> 31) & 0x1;
   msb = !msb;
   return (msb << 31) + ((uf << 1) >> 1);
 }
