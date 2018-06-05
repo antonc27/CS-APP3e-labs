@@ -362,7 +362,7 @@ unsigned float_i2f(int x) {
   int mantissa;
   int roundoff;
   int diff;
-  int msb = (x >> 31) & 0x1;
+  int msb = x & (1 << 31);
   int count = 0;
   unsigned v;
   if (x == 0) {
@@ -374,17 +374,19 @@ unsigned float_i2f(int x) {
   v = x;
   while (v) {
     v >>= 1;
-    count += 1;
+    if (v) {
+      count += 1;
+    }
   }
-  count--;
+  mask = (1 << 23) - 1;
   if (count <= 23) {
-    mask = (1 << count) - 1;
     diff = 23 - count;
+    mask >>= diff;
     mantissa = (x & mask) << diff;
   } else {
     diff = count - 23;
-    mask = ((1 << 23) - 1) << diff;
-    mantissa = (x & mask) >> diff;
+    mantissa = (x >> diff) & mask;
+    
     mask2 = 1 << diff;
     roundoff = x & (mask2 - 1);
     mask2 >>= 1;
@@ -394,7 +396,7 @@ unsigned float_i2f(int x) {
       mantissa += 1;
     }
   }
-  return (msb << 31) + ((count + 127) << 23) + mantissa;
+  return msb + ((count + 127) << 23) + mantissa;
 }
 /* 
  * float_twice - Return bit-level equivalent of expression 2*f for
