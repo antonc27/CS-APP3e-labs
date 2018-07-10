@@ -139,7 +139,7 @@ NOTES:
  *   Rating: 1
  */
 int bitAnd(int x, int y) {
-  return 2;
+  return ~(~x | ~y);
 }
 /* 
  * getByte - Extract byte n from word x
@@ -150,15 +150,8 @@ int bitAnd(int x, int y) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-
-
-
-
-
-
-
-  return 2;
-
+  int shift = n << 3;
+  return (x >> shift) & 0xFF;
 }
 /* 
  * logicalShift - shift x to the right by n, using a logical shift
@@ -169,7 +162,11 @@ int getByte(int x, int n) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+  int saved_bit = 1 & (x >> 31);
+  int y = x & ~(1 << 31);
+  int negative_n = ~n + 1;
+  int restored = saved_bit << (31 + negative_n);
+  return (y >> n) | restored;
 }
 /*
  * bitCount - returns count of number of 1's in word
@@ -179,7 +176,23 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  return 2;
+  int m1 = 0x55;
+  int m2 = 0x33;
+  int m4 = 0x0f;
+  int c = 0;
+  m1 = m1 + (m1 << 8);
+  m1 = m1 + (m1 << 16);
+  m2 = m2 + (m2 << 8);
+  m2 = m2 + (m2 << 16);
+  m4 = m4 + (m4 << 8);
+  m4 = m4 + (m4 << 16);
+  c = (x >> 1) & m1;
+  x += ~c + 1;             //put count of each 2 bits into those 2 bits                                                                                                                      
+  x = (x & m2) + ((x >> 2) & m2); //put count of each 4 bits into those 4 bits                                                                                                               
+  x = (x + (x >> 4)) & m4;        //put count of each 8 bits into those 8 bits                                                                                                               
+  x += x >>  8;  //put count of each 16 bits into their lowest 8 bits                                                                                                                        
+  x += x >> 16;  //put count of each 32 bits into their lowest 8 bits                                                                                                                        
+  return x & 0x7f;
 }
 /* 
  * bang - Compute !x without using !
