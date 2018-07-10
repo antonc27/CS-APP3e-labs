@@ -211,7 +211,7 @@ int bang(int x) {
  *   Rating: 1
  */
 int tmin(void) {
-  return 2;
+  return 1 << 31;
 }
 /* 
  * fitsBits - return 1 if x can be represented as an 
@@ -244,7 +244,7 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x + 1;
 }
 /* 
  * isPositive - return 1 if x > 0, return 0 otherwise 
@@ -254,7 +254,9 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return 2;
+  x = (x >> 1) + (x & 0x1);
+  int negative_bit = ((x-1) >> 31) & 0x1;
+  return negative_bit ^ 0x1;
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
