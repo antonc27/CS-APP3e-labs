@@ -202,7 +202,13 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+  int saved_sign_bit = x >> 31;
+  int tmax = ~(1 << 31);
+  int neg_half_tmax = (0xc0 << 24) + 1;
+  x += tmax;
+  x >>= 1;
+  x += neg_half_tmax;
+  return ~((x >> 31) | saved_sign_bit) & 0x1;
 }
 /* 
  * tmin - return minimum two's complement integer 
