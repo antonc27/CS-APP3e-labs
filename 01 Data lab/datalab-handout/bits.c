@@ -229,7 +229,12 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  return 2;
+  int mask = (1 << n) + ~0;
+  int reduced = x & mask;
+  int shift = (33 + ~n);
+  int extended = (reduced << shift) >> shift;
+  int diff = x ^ extended;
+  return !diff;
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
