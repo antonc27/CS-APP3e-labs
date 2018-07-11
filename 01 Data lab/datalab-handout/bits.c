@@ -245,7 +245,10 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+  int mask = x >> 31; // just stretching sign bit
+  int bias = (1 << n) + ~0;
+  x += mask & bias;
+  return x >> n;
 }
 /* 
  * negate - return -x 
