@@ -300,7 +300,33 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4
  */
 int ilog2(int x) {
-  return 2;
+  int r = 0;
+  int m1 = ((0xff << 8) + 0xff) << 16; // 0xffff0000
+  int m2 = 0xff << 8; // 0xff00
+  int m3 = 0xf0;
+  int m4 = 0xc;
+  int m5 = 0x2;
+  int mask = (!!(x & m1)) << 4;
+  int shift = 16 & mask;
+  x >>= shift;
+  r |= shift;
+  mask = (!!(x & m2)) << 3;
+  shift = 8 & mask;
+  x >>= shift;
+  r |= shift;
+  mask = (!!(x & m3)) << 2;
+  shift = 4 & mask;
+  x >>= shift;
+  r |= shift;
+  mask = (!!(x & m4)) << 1;
+  shift = 2 & mask;
+  x >>= shift;
+  r |= shift;
+  mask = !!(x & m5);
+  shift = mask;
+  x >>= shift;
+  r |= shift;
+  return r;
 }
 /* 
  * float_neg - Return bit-level equivalent of expression -f for
