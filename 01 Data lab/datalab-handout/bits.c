@@ -410,5 +410,18 @@ unsigned float_i2f(int x) {
  *   Rating: 4
  */
 unsigned float_twice(unsigned uf) {
-  return 2;
+  int msb = uf & (1 << 31);
+  int masked = uf & 0x7f800000;
+  if (uf == 0 || uf == 0x80000000) {
+    return uf;
+  }
+  if (masked == 0x7f800000) {
+    return uf;
+  } else if (!masked) {
+    uf <<= 1;
+    uf = msb + (uf & 0x7fffffff);
+  } else {
+    uf += (1 << 23);
+  }
+  return uf;
 }
