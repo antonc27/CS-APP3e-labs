@@ -358,6 +358,7 @@ unsigned float_neg(unsigned uf) {
  */
 unsigned float_i2f(int x) {
   int mask;
+  int mask2;
   int mantissa;
   int roundoff;
   int diff;
@@ -384,7 +385,7 @@ unsigned float_i2f(int x) {
     diff = count - 23;
     mask = ((1 << 23) - 1) << diff;
     mantissa = (x & mask) >> diff;
-    int mask2 = 1 << diff;
+    mask2 = 1 << diff;
     roundoff = x & (mask2 - 1);
     mask2 >>= 1;
     if (roundoff > mask2) {
