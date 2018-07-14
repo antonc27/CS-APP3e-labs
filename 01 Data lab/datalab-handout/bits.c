@@ -357,7 +357,43 @@ unsigned float_neg(unsigned uf) {
  *   Rating: 4
  */
 unsigned float_i2f(int x) {
-  return 2;
+  int mask;
+  int mantissa;
+  int roundoff;
+  int diff;
+  int msb = (x >> 31) & 0x1;
+  int count = 0;
+  unsigned v;
+  if (x == 0) {
+    return 0;
+  }
+  if (msb) {
+    x = -x;
+  }
+  v = x;
+  while (v) {
+    v >>= 1;
+    count += 1;
+  }
+  count--;
+  if (count <= 23) {
+    mask = (1 << count) - 1;
+    diff = 23 - count;
+    mantissa = (x & mask) << diff;
+  } else {
+    diff = count - 23;
+    mask = ((1 << 23) - 1) << diff;
+    mantissa = (x & mask) >> diff;
+    int mask2 = 1 << diff;
+    roundoff = x & (mask2 - 1);
+    mask2 >>= 1;
+    if (roundoff > mask2) {
+      mantissa += 1;
+    } else if ((roundoff == mask2) && (mantissa & 0x1)) {
+      mantissa += 1;
+    }
+  }
+  return (msb << 31) + ((count + 127) << 23) + mantissa;
 }
 /* 
  * float_twice - Return bit-level equivalent of expression 2*f for
